@@ -1,0 +1,20 @@
+/* Increase banner height & logo size */
+header {
+  padding: 30px 60px;           /* taller banner */
+}
+
+header img {
+  width: 100px;                 /* larger logo */
+  margin-left: 0;               /* you can remove the left offset if you like */
+}
+
+header h1 {
+  font-size: 3rem;              /* bigger title text */
+}
+
+/* Center the overall content */
+.container {
+  max-width: 800px;             /* constrain the page width */
+  margin: 0 auto !important;    /* center horizontally */
+  padding: 0 20px;              /* small side padding so things don't butt right to the edge */
+}
