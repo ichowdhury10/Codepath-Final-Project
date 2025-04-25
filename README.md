@@ -69,7 +69,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='https://i.imgur.com/vHeKKrq.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+![Linkhub Demo](https://i.imgur.com/vHeKKrq.gif)
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with Screen Recording to Gif
