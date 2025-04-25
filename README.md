@@ -69,7 +69,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-![Linkhub Demo](https://i.imgur.com/vHeKKrq.gif)
+[View the full demo album on Imgur](https://imgur.com/a/E47ibkJ)
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with Screen Recording to Gif
