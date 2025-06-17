@@ -69,9 +69,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-[View the full demo album on Imgur](https://imgur.com/a/E47ibkJ)
-
-Please give the link a minute, it takes a while to render. Thnak you!
+Please give the link a minute, it takes a while to render. Thank you!
 
 <!-- Replace this with whatever GIF tool you used! -->
 GIF created with Screen Recording to Gif
