@@ -2,7 +2,7 @@
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import './AuthForm.css' // simple shared styles for both forms
+import './AuthForm.css'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -14,12 +14,11 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-    try {
-      await login(email, password)
+    const { error } = await login(email, password)
+    if (error) {
+      setError(error.message)
+    } else {
       navigate('/')
-    } catch (err) {
-      setError('Failed to log in')
-      console.error(err)
     }
   }
 

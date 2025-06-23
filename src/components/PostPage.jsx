@@ -1,87 +1,95 @@
+// src/components/PostPage.jsx
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { supabase } from '../supabaseClient'
+import { useAuth } from '../contexts/AuthContext'
 import './PostPage.css'
 
 export default function PostPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
 
-  const [posts, setPosts] = useState([])
   const [post, setPost] = useState(null)
-
   const [isEditing, setIsEditing] = useState(false)
   const [titleEdit, setTitleEdit] = useState('')
   const [contentEdit, setContentEdit] = useState('')
   const [newComment, setNewComment] = useState('')
-  const [tags, setTags] = useState([])
 
-  // load & find
+  // Load the post
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('posts')) || []
-    setPosts(saved)
-    const found = saved.find((p) => String(p.id) === id)
-    if (!found) return navigate('/')
-    setPost(found)
+    const loadPost = async () => {
+      const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('id', id)
+        .single()
+      if (error || !data) {
+        console.error(error)
+        return navigate('/')
+      }
+      setPost(data)
+    }
+    loadPost()
   }, [id, navigate])
 
-  const persist = (updated) => {
-    localStorage.setItem('posts', JSON.stringify(updated))
-    setPosts(updated)
-    setPost(updated.find((p) => p.id === post.id))
+  // Helper to update local state
+  const refresh = (updated) => setPost(updated)
+
+  // Up/down vote
+  const handleVote = async (field) => {
+    const { data, error } = await supabase
+      .from('posts')
+      .update({ [field]: post[field] + 1 })
+      .eq('id', post.id)
+      .single()
+    if (error) console.error(error)
+    else refresh(data)
   }
 
-  const handleVote = (field) =>
-    persist(
-      posts.map((p) => (p.id === post.id ? { ...p, [field]: p[field] + 1 } : p))
-    )
-
-  const handleSave = () => {
-    const updated = posts.map((p) =>
-      p.id === post.id ? { ...p, title: titleEdit, content: contentEdit } : p
-    )
-    persist(updated)
-    setIsEditing(false)
+  // Save edits
+  const handleSave = async () => {
+    const { data, error } = await supabase
+      .from('posts')
+      .update({ title: titleEdit, content: contentEdit })
+      .eq('id', post.id)
+      .single()
+    if (error) console.error(error)
+    else {
+      refresh(data)
+      setIsEditing(false)
+    }
   }
 
-  const handleDelete = () => {
-    const updated = posts.filter((p) => p.id !== post.id)
-    localStorage.setItem('posts', JSON.stringify(updated))
-    navigate('/')
+  // Delete post
+  const handleDelete = async () => {
+    const { error } = await supabase.from('posts').delete().eq('id', post.id)
+    if (error) console.error(error)
+    else navigate('/')
   }
 
-  const handleAddComment = () => {
+  // Add comment (still client‐side array update)
+  const handleAddComment = async () => {
     if (!newComment.trim()) return
-    const updated = posts.map((p) =>
-      p.id === post.id
-        ? { ...p, comments: [...(p.comments || []), newComment.trim()] }
-        : p
-    )
-    persist(updated)
-    setNewComment('')
+    const updatedComments = [...(post.comments || []), newComment.trim()]
+    const { data, error } = await supabase
+      .from('posts')
+      .update({ comments: updatedComments })
+      .eq('id', post.id)
+      .single()
+    if (error) console.error(error)
+    else {
+      refresh(data)
+      setNewComment('')
+    }
   }
-
-  // fetch AI tags once
-  useEffect(() => {
-    if (!post) return
-    fetch('http://localhost:3000/tag', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: post.content }),
-    })
-      .then((r) => r.json())
-      .then((d) => d.tags && setTags(d.tags))
-      .catch(() => {
-        /* ignore */
-      })
-  }, [post])
 
   if (!post) return <div className="loading">Loading…</div>
 
   return (
     <div className="postpage-container">
-      {/* back button OUTSIDE the card */}
       <button onClick={() => navigate('/')} className="back-btn">
-        ← Back
+        ← Back to Feed
       </button>
 
       <div className="postpage-card">
@@ -99,27 +107,19 @@ export default function PostPage() {
               onChange={(e) => setContentEdit(e.target.value)}
             />
             <button onClick={handleSave} className="btn-save">
-              Save
+              Save Changes
             </button>
           </>
         ) : (
           <>
             <h1>{post.title}</h1>
             <p className="post-date">
-              {new Date(post.createdAt).toLocaleString()}
+              {new Date(post.created_at).toLocaleString()}
             </p>
-            {post.image && (
-              <img src={post.image} alt="" className="post-image" />
+            {post.image_url && (
+              <img src={post.image_url} alt="" className="post-image" />
             )}
             <p className="post-content">{post.content}</p>
-
-            <div className="tag-list">
-              {tags.map((t, i) => (
-                <span key={i} className="tag">
-                  {t}
-                </span>
-              ))}
-            </div>
 
             <div className="vote-row">
               <button
@@ -136,35 +136,36 @@ export default function PostPage() {
               </button>
             </div>
 
-            <div className="action-row">
-              <button
-                onClick={() => {
-                  setTitleEdit(post.title)
-                  setContentEdit(post.content)
-                  setIsEditing(true)
-                }}
-                className="btn-edit"
-              >
-                Edit
-              </button>
-              <button onClick={handleDelete} className="btn-delete">
-                Delete
-              </button>
-            </div>
+            {/* Only show Edit/Delete if current user is the owner */}
+            {user?.id === post.owner && (
+              <div className="action-row">
+                <button
+                  onClick={() => {
+                    setTitleEdit(post.title)
+                    setContentEdit(post.content)
+                    setIsEditing(true)
+                  }}
+                  className="btn-edit"
+                >
+                  Edit
+                </button>
+                <button onClick={handleDelete} className="btn-delete">
+                  Delete
+                </button>
+              </div>
+            )}
           </>
         )}
 
-        {/* single, light divider */}
-        <hr className="divider" />
+        <hr />
 
         <div className="comments-section">
           <h3>Comments</h3>
-          {post.comments.map((c, i) => (
+          {(post.comments || []).map((c, i) => (
             <p key={i} className="comment">
               {c}
             </p>
           ))}
-
           <textarea
             rows={2}
             placeholder="Add a comment…"

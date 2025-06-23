@@ -2,65 +2,77 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
-import { supabase } from '../supabaseClient'
 import './PostFeed.css'
 
-export default function PostFeed() {
-  const [posts, setPosts] = useState([])
-  const [searchQuery, setSearch] = useState('')
+export default function PostFeed({ posts, setPosts }) {
+  // Form state
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+
+  // Search & sort
+  const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('newest')
 
-  // fetch initial posts
+  // Comments per-post
+  const [commentsState, setCommentsState] = useState({})
+
+  // Load saved posts on mount
   useEffect(() => {
-    const load = async () => {
-      let { data, error } = await supabase
-        .from('posts')
-        .select('*')
-        .order('createdAt', { ascending: false })
-      if (error) console.error(error)
-      else setPosts(data)
-    }
-    load()
-  }, [])
+    const saved = JSON.parse(localStorage.getItem('posts')) || []
+    setPosts(saved)
+  }, [setPosts])
 
-  // subscribe to realtime INSERTS & UPDATES
-  useEffect(() => {
-    const subscription = supabase
-      .from('posts')
-      .on('INSERT', (payload) => {
-        setPosts((ps) => [payload.new, ...ps])
-      })
-      .on('UPDATE', (payload) => {
-        setPosts((ps) =>
-          ps.map((p) => (p.id === payload.new.id ? payload.new : p))
-        )
-      })
-      .subscribe()
-
-    return () => {
-      supabase.removeSubscription(subscription)
-    }
-  }, [])
-
-  // helpers
-  const persistUpdate = async (id, changes) => {
-    const { error } = await supabase.from('posts').update(changes).eq('id', id)
-    if (error) console.error(error)
-    // real-time listener will update state for us
+  // Persist helper
+  const persist = (updated) => {
+    setPosts(updated)
+    localStorage.setItem('posts', JSON.stringify(updated))
   }
 
-  const handleUpvote = (id) =>
-    persistUpdate(id, { upvotes: supabase.literal('upvotes + 1') })
-  const handleDownvote = (id) =>
-    persistUpdate(id, { downvotes: supabase.literal('downvotes + 1') })
+  // Create a new post
+  const handleCreate = (e) => {
+    e.preventDefault()
+    if (!title.trim() || !content.trim()) return
 
-  const handleDelete = async (id) => {
-    const { error } = await supabase.from('posts').delete().eq('id', id)
-    if (error) console.error(error)
-    // real-time listener will remove it for us
+    const newPost = {
+      id: Date.now(),
+      title: title.trim(),
+      content: content.trim(),
+      createdAt: new Date().toISOString(),
+      upvotes: 0,
+      downvotes: 0,
+      comments: [],
+    }
+    persist([newPost, ...posts])
+    setTitle('')
+    setContent('')
   }
 
-  // filter & sort
+  // Vote helper
+  const updateVotes = (postId, field) => {
+    const updated = posts.map((p) =>
+      p.id === postId ? { ...p, [field]: p[field] + 1 } : p
+    )
+    persist(updated)
+  }
+
+  // Delete a post
+  const handleDelete = (postId) => {
+    const updated = posts.filter((p) => p.id !== postId)
+    persist(updated)
+  }
+
+  // Add comment
+  const handleAddComment = (postId) => {
+    const text = (commentsState[postId] || '').trim()
+    if (!text) return
+    const updated = posts.map((p) =>
+      p.id === postId ? { ...p, comments: [...p.comments, text] } : p
+    )
+    persist(updated)
+    setCommentsState((cs) => ({ ...cs, [postId]: '' }))
+  }
+
+  // Filter & sort posts
   const filtered = posts.filter((p) =>
     p.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
@@ -82,23 +94,54 @@ export default function PostFeed() {
 
   return (
     <div className="postfeed-container">
-      {/* search + sort */}
+      {/* Create‐post card */}
+      <div className="create-card">
+        <h2>Create a New Post</h2>
+        <form onSubmit={handleCreate}>
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <textarea
+            rows={4}
+            placeholder="Write your content here (Markdown supported)…"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+          {/* Live Markdown preview */}
+          <div className="md-preview">
+            <h4>Preview</h4>
+            <div className="preview-box">
+              <ReactMarkdown>
+                {content || '*Nothing to preview…*'}
+              </ReactMarkdown>
+            </div>
+          </div>
+          <button type="submit" disabled={!title.trim() || !content.trim()}>
+            Create Post
+          </button>
+        </form>
+      </div>
+
+      {/* Search + Sort */}
       <div className="search-sort">
         <input
           type="text"
           placeholder="🔍 Search posts by title…"
           value={searchQuery}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
           <option value="newest">Newest first</option>
           <option value="oldest">Oldest first</option>
-          <option value="upvotes">Top upvoted</option>
-          <option value="downvotes">Top downvoted</option>
+          <option value="upvotes">Most upvotes</option>
+          <option value="downvotes">Most downvotes</option>
         </select>
       </div>
 
-      {/* feed */}
+      {/* Feed */}
       <h2>Your Feed</h2>
       <div className="feed-list">
         {displayed.map((post) => (
@@ -112,6 +155,7 @@ export default function PostFeed() {
               </span>
             </div>
 
+            {/* Excerpt */}
             <div className="post-content">
               <ReactMarkdown>
                 {post.content.length > 200
@@ -120,27 +164,56 @@ export default function PostFeed() {
               </ReactMarkdown>
             </div>
 
+            {/* Votes */}
             <div className="vote-buttons">
               <button
-                onClick={() => handleUpvote(post.id)}
+                onClick={() => updateVotes(post.id, 'upvotes')}
                 className="btn-upvote"
               >
                 👍 {post.upvotes}
               </button>
               <button
-                onClick={() => handleDownvote(post.id)}
+                onClick={() => updateVotes(post.id, 'downvotes')}
                 className="btn-downvote"
               >
                 👎 {post.downvotes}
               </button>
             </div>
 
+            {/* Delete */}
             <button
               onClick={() => handleDelete(post.id)}
               className="btn-delete"
             >
               Delete
             </button>
+
+            {/* Comments */}
+            <div className="comments-section">
+              <h4>Comments</h4>
+              {post.comments.map((c, i) => (
+                <p key={i} className="comment">
+                  {c}
+                </p>
+              ))}
+              <textarea
+                rows={2}
+                placeholder="Add a comment…"
+                value={commentsState[post.id] || ''}
+                onChange={(e) =>
+                  setCommentsState((cs) => ({
+                    ...cs,
+                    [post.id]: e.target.value,
+                  }))
+                }
+              />
+              <button
+                onClick={() => handleAddComment(post.id)}
+                className="btn-comment"
+              >
+                Add Comment
+              </button>
+            </div>
           </div>
         ))}
       </div>
