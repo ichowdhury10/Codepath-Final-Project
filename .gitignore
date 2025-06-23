@@ -1,24 +1,19 @@
+# Node modules (shared by front‐end and any backend code)
+node_modules/
+
+# Vite build output
+dist/
+
+# Local environment variables (must not be committed)
+.env
+
+# MacOS file metadata (if you’re on a Mac)
+.DS_Store
+
+# Vite cache (optional)
+.vite/
+
 # Logs
-logs
-*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?

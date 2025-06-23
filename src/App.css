@@ -1,180 +1,50 @@
-/* src/App.css */
-
 /* Banner Styles */
-header {
-  background-color: #007bff;
-  padding: 20px 40px;  /* Increased padding for better spacing */
+.top-banner {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color: #007bff;
+  padding: 20px 40px;
   color: white;
   border-radius: 0 0 10px 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow for a clean look */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-header img {
-  width: 70px;  /* Slightly bigger logo size */
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-container .logo {
+  width: 50px;
   height: auto;
   cursor: pointer;
-  margin-left: 20px;
+  margin-right: 15px;
 }
 
-header h1 {
-  font-size: 2.5rem;  /* Larger title */
-  margin-left: 20px;
-  font-weight: bold;
+.logo-container h1 {
+  font-size: 1.8rem;
+  margin: 0;
 }
 
-/* Tagline under the logo */
-header p {
-  font-size: 1rem;
-  margin-left: 10px;
-  font-style: italic;
-  color: #f8f9fa;
-}
-
-/* Button Styles */
-.btn {
-  display: inline-flex;
+/* Header navigation */
+.header-nav {
+  display: flex;
   align-items: center;
-  padding: 10px 15px;
-  border-radius: 25px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-right: 10px;
+  gap: 1rem;
 }
 
-/* Upvote Button */
-.btn-upvote {
-  background-color: #28a745;
+.header-nav a,
+.logout-btn {
   color: white;
-}
-
-.btn-upvote:hover {
-  background-color: #218838;
-}
-
-/* Downvote Button */
-.btn-downvote {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-downvote:hover {
-  background-color: #c82333;
-}
-
-/* Edit Button */
-.btn-edit {
-  background-color: #ffc107;
-  color: white;
-}
-
-.btn-edit:hover {
-  background-color: #e0a800;
-}
-
-/* Delete Button */
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-}
-
-/* Post Feed Styling */
-.card {
-  margin: 10px 0;  /* Reduced space between posts */
-  padding: 15px;  /* Reduced padding for better compactness */
-  border-radius: 12px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-.card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Hover effect */
-}
-
-/* Text Area */
-textarea {
-  padding: 10px;
-  width: 100%;
-  border-radius: 8px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  margin-top: 10px;
-}
-
-textarea:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-/* Thumbs Up/Down Buttons */
-.btn-upvote, .btn-downvote {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 12px;
-  margin-right: 10px;
-}
-
-.btn-upvote i, .btn-downvote i {
-  margin-right: 5px;
-}
-
-/* Create New Post Styling */
-.create-post-container {
-  margin-top: 30px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.create-post-container h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  font-weight: bold;
-}
-
-.create-post-container input,
-.create-post-container textarea {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  transition: border-color 0.2s ease;
-}
-
-.create-post-container input:focus,
-.create-post-container textarea:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.create-post-container button {
-  padding: 12px 20px;
-  background-color: #007bff;
-  color: white;
+  text-decoration: none;
+  background: transparent;
   border: none;
-  border-radius: 25px;
-  font-size: 16px;
+  font-size: 1rem;
   cursor: pointer;
-  width: 100%;
-  margin-top: 15px;
-  transition: background-color 0.3s ease;
 }
 
-.create-post-container button:hover {
-  background-color: #0056b3;
+.header-nav a:hover,
+.logout-btn:hover {
+  text-decoration: underline;
 }

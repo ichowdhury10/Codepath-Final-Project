@@ -1,65 +1,91 @@
+// src/App.jsx
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  Link,
+} from 'react-router-dom'
+import { useAuth } from './contexts/AuthContext'
 import logo from './assets/LinkhubLogo.png'
 import PostFeed from './components/PostFeed'
 import PostPage from './components/PostPage'
-import PostForm from './components/PostForm'
-
+import Profile from './components/Profile'
+import Login from './components/Login'
+import SignUp from './components/SignUp'
 import './App.css'
 
+function PrivateRoute({ children }) {
+  const { user } = useAuth()
+  return user ? children : <Navigate to="/login" replace />
+}
+
 export default function App() {
+  const { user, logout } = useAuth()
   const [posts, setPosts] = useState([])
 
-  // load from localStorage once
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('posts') || '[]')
+    const saved = JSON.parse(localStorage.getItem('posts')) || []
     setPosts(saved)
   }, [])
-
-  // helper to add or update the posts array + persist
-  const savePosts = (next) => {
-    setPosts(next)
-    localStorage.setItem('posts', JSON.stringify(next))
-  }
-
-  // add a new post from the home form
-  const handleAddPost = (newPost) => {
-    savePosts([newPost, ...posts])
-  }
 
   return (
     <Router>
       <header className="top-banner">
-        <img
-          src={logo}
-          alt="Linkhub Logo"
-          className="logo"
-          onClick={() => (window.location.href = '/')}
-        />
-        <h1>Linkhub</h1>
+        <div className="logo-container">
+          <Link to="/">
+            <img src={logo} alt="Linkhub Logo" className="logo" />
+          </Link>
+          <h1>Linkhub</h1>
+        </div>
+
+        <nav className="header-nav">
+          {user ? (
+            <>
+              <Link to="/profile">Profile</Link>
+              <button onClick={logout} className="logout-btn">
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">Log In</Link>
+              <Link to="/signup">Sign Up</Link>
+            </>
+          )}
+        </nav>
       </header>
 
-      <div className="container">
-        <Routes>
-          {/* Home: create + feed */}
-          <Route
-            path="/"
-            element={
-              <>
-                <PostForm onAddPost={handleAddPost} />
-                <PostFeed posts={posts} />
-              </>
-            }
-          />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
 
-          {/* Detail page: all interactions */}
-          <Route
-            path="/post/:id"
-            element={<PostPage posts={posts} savePosts={savePosts} />}
-          />
-        </Routes>
-      </div>
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <PostFeed posts={posts} setPosts={setPosts} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/post/:id"
+          element={
+            <PrivateRoute>
+              <PostPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </Router>
   )
 }

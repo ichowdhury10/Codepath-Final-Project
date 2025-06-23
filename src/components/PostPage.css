@@ -1,0 +1,243 @@
+/* Container & Card */
+.postpage-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background-color: #f1f5f9;
+}
+
+.postpage-card {
+  width: 100%;
+  max-width: 700px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+  font-size: 1.25rem;
+}
+
+/* ─── Back Button ───────────────────────────────────────── */
+.back-btn {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #007bff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+}
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+/* ─── Post Header ───────────────────────────────────────── */
+.postpage-card h1 {
+  font-size: 2rem;
+  margin: 0;
+  margin-bottom: 0.5rem;
+}
+
+.post-date {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+/* ─── Image & Content ────────────────────────────────────── */
+.post-image {
+  width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.post-content,
+.edit-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Editing Inputs */
+.edit-title {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.edit-content {
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+/* Save Changes Button */
+.btn-save {
+  align-self: flex-end;
+  padding: 0.75rem 1.25rem;
+  background-color: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+.btn-save:hover {
+  background-color: #059669;
+}
+
+/* ─── Tags ──────────────────────────────────────────────── */
+.tag-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background-color: #e2e8f0;
+  color: #1e293b;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 4px;
+}
+
+/* ─── Voting ────────────────────────────────────────────── */
+.vote-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-upvote,
+.btn-downvote {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-upvote:hover {
+  background-color: #dcffe4;
+  border-color: #28a745;
+}
+
+.btn-downvote:hover {
+  background-color: #ffe4e4;
+  border-color: #dc3545;
+}
+
+/* ─── Edit / Delete Row ─────────────────────────────────── */
+.action-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.btn-edit,
+.btn-delete {
+  /* unified sizing */
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  line-height: 1.2;        /* ensures consistent height */
+  height: 3rem;            /* lock them to the same height */
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.2s;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+}
+.btn-edit:hover {
+  background-color: #e0a800;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+}
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+/* Divider */
+.postpage-card hr {
+  border: none;
+  border-top: 1px solid #e2e8f0;
+  margin: 1.5rem 0;
+}
+
+/* ─── Comments Section ──────────────────────────────────── */
+.comments-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.comments-section h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.comment {
+  background-color: #f8fafc;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.comments-section textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.comments-section textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Add Comment Button */
+.btn-comment {
+  align-self: flex-end;
+  padding: 0.75rem 1.25rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.btn-comment:hover {
+  background-color: #0056b3;
+}

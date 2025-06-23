@@ -1,20 +1,42 @@
-/* Increase banner height & logo size */
-header {
-  padding: 30px 60px;           /* taller banner */
+:root {
+  /* Color palette */
+  --color-primary:   #0056b3;
+  --color-secondary: #17a2b8;
+  --color-bg:        #f9f9f9;
+  --color-card:      #fff;
+  --color-text:      #333;
+  --color-muted:     #666;
+
+  /* Type scale */
+  --font-base:       16px;
+  --font-family:     'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --line-height:     1.6;
 }
 
-header img {
-  width: 100px;                 /* larger logo */
-  margin-left: 0;               /* you can remove the left offset if you like */
+html {
+  font-size: var(--font-base);
 }
 
-header h1 {
-  font-size: 3rem;              /* bigger title text */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  line-height: var(--line-height);
+  background: var(--color-bg);
 }
 
-/* Center the overall content */
-.container {
-  max-width: 800px;             /* constrain the page width */
-  margin: 0 auto !important;    /* center horizontally */
-  padding: 0 20px;              /* small side padding so things don't butt right to the edge */
+/* Headings */
+h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+
+/* Focus outlines for accessibility */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus,
+a:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }

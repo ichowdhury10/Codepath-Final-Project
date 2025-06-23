@@ -1,0 +1,56 @@
+/* src/components/Profile.css */
+
+.profile-container {
+  max-width: 600px;
+  margin: 3rem auto;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.profile-container h2 {
+  margin-bottom: 1rem;
+}
+
+.profile-container p {
+  font-size: 1rem;
+  color: #333;
+}
+
+.btn-logout {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-logout:hover {
+  background: #c82333;
+}
+
+.my-posts-list {
+  list-style: none;
+  padding-left: 0;
+  margin-top: 1rem;
+}
+
+.my-posts-list li {
+  margin-bottom: 0.5rem;
+}
+
+.my-post-link {
+  color: #007bff;
+  text-decoration: none;
+}
+.my-post-link:hover {
+  text-decoration: underline;
+}
+
+.post-date-sm {
+  color: #666;
+  font-size: 0.9rem;
+}

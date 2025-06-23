@@ -1,0 +1,242 @@
+/* src/components/PostFeed.css */
+
+/* 1) Make padding count toward element width */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* 2) Centered wrapper */
+.postfeed-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;            /* small horizontal gutter */
+  font-family:
+    system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* 3) Create-post card */
+.create-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.create-card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* 4) Form inputs / textareas */
+.create-card form input,
+.create-card form textarea {
+  width: 100%;               /* full width of parent */
+  padding: 0.75rem 1rem;     /* extra right padding included */
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  resize: vertical;
+  overflow: hidden;          /* no overflow text */
+  background: #fafafa;
+  transition: border-color 0.2s;
+}
+
+.create-card form input:focus,
+.create-card form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* 5) Markdown preview */
+.md-preview {
+  margin-bottom: 1rem;
+}
+.preview-box {
+  background: #f8f9fa;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* 6) Create button */
+.create-card form button {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.create-card form button:disabled {
+  background: #a0c5f8;
+  cursor: not-allowed;
+}
+
+.create-card form button:not(:disabled):hover {
+  background: #0056b3;
+}
+
+/* 7) Search + sort row stays within container */
+.search-sort {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.search-sort input,
+.search-sort select {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+}
+
+/* 8) Feed heading */
+.postfeed-container > h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+/* 9) Individual post cards */
+.feed-list .post-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Header row: title + date */
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.post-title {
+  font-size: 1.25rem;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+.post-title:hover {
+  text-decoration: underline;
+}
+.post-date {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* Excerpt container */
+.post-content {
+  margin: 0.75rem 0 1rem;
+  color: #333;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+/* Vote buttons */
+.vote-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.btn-upvote,
+.btn-downvote {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-upvote:hover {
+  background: #e6f4ea;
+  border-color: #b8e0c9;
+}
+.btn-downvote:hover {
+  background: #fdecea;
+  border-color: #f7cacc;
+}
+
+/* Delete button */
+.btn-delete {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #dc3545;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-delete:hover {
+  background: #c82333;
+}
+
+/* Comments section */
+.comments-section {
+  margin-top: 1.25rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+.comments-section h4 {
+  margin-bottom: 0.75rem;
+  color: #333;
+  font-weight: 500;
+}
+.comments-section .comment {
+  margin-bottom: 0.5rem;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+/* Add-comment box */
+.comments-section textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  resize: vertical;
+}
+.comments-section textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Add-Comment button */
+.btn-comment {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-comment:hover {
+  background: #0056b3;
+}

@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 export default function CommentForm({ post, save }) {
   const [text, setText] = useState('')
 
-  const handle = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     if (!text.trim()) return
     save({ ...post, comments: [...post.comments, text] })
@@ -11,13 +11,13 @@ export default function CommentForm({ post, save }) {
   }
 
   return (
-    <form onSubmit={handle} className="comment-form">
+    <form onSubmit={handleSubmit} className="comment-form">
       <h3>Comments</h3>
       {post.comments.length === 0 ? (
-        <p>No comments yet.</p>
+        <p className="text-gray-500">No comments yet.</p>
       ) : (
         post.comments.map((c, i) => (
-          <p key={i} className="comment">
+          <p key={i} className="comment-item">
             {c}
           </p>
         ))
