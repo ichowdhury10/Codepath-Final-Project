@@ -1,95 +1,43 @@
-# Web Development Final Project - *Linkhub*
+**Linkhub**
 
-Submitted by: **Injam Chowdhury**
+Linkhub is a modern React-powered community forum application built to showcase my full-stack web development skills. Users can sign up, create and manage posts with rich text (Markdown) and optional images, interact through upvotes/downvotes and comments, and personalize their experience with live previews and real-time updates via Supabase.
 
-This web app: **is a React-powered community forum where you can create posts with a title, body text, and optional image; view and sort a feed by newest or most-upvoted; and search by title. Clicking a post opens its detail page, showing full content, an image preview, unlimited comments, and an upvote button you can click as often as you like. You can also edit or delete your own posts, with all data persisted in your browser’s localStorage.**
-
-Time spent: **6** hours spent in total
-
-## Required Features
-
-The following **required** functionality is completed:
+**Live Demo**
 
 
-- [X] **Web app includes a create form that allows the user to create posts**
-  - Form requires users to add a post title
-  - Forms should have the *option* for users to add: 
-    - additional textual content
-    - an image added as an external image URL
-- [X] **Web app includes a home feed displaying previously created posts**
-  - Web app must include home feed displaying previously created posts
-  - By default, each post on the posts feed should show only the post's:
-    - creation time
-    - title 
-    - upvotes count
-  - Clicking on a post should direct the user to a new page for the selected post
-- [X] **Users can view posts in different ways**
-  - Users can sort posts by either:
-    -  creation time
-    -  upvotes count
-  - Users can search for posts by title
-- [X] **Users can interact with each post in different ways**
-  - The app includes a separate post page for each created post when clicked, where any additional information is shown, including:
-    - content
-    - image
-    - comments
-  - Users can leave comments underneath a post on the post page
-  - Each post includes an upvote button on the post page. 
-    - Each click increases the post's upvotes count by one
-    - Users can upvote any post any number of times
 
-- [X] **A post that a user previously created can be edited or deleted from its post pages**
-  - After a user creates a new post, they can go back and edit the post
-  - A previously created post can be deleted from its post page
+Tech Stack & Tools
 
-The following **optional** features are implemented:
+Frontend: ReactJs, React Router, React Markdown
 
+Styling: CSS Modules (component-scoped .css files), Flexbox, Grid
 
-- [ ] Web app implements pseudo-authentication
-  - Users can only edit and delete posts or delete comments by entering the secret key, which is set by the user during post creation
-  - **or** upon launching the web app, the user is assigned a random user ID. It will be associated with all posts and comments that they make and displayed on them
-  - For both options, only the original user author of a post can update or delete it
-- [ ] Users can repost a previous post by referencing its post ID. On the post page of the new post
-  - Users can repost a previous post by referencing its post ID
-  - On the post page of the new post, the referenced post is displayed and linked, creating a thread
-- [ ] Users can customize the interface
-  - e.g., selecting the color scheme or showing the content and image of each post on the home feed
-- [ ] Users can add more characterics to their posts
-  - Users can share and view web videos
-  - Users can set flags such as "Question" or "Opinion" while creating a post
-  - Users can filter posts by flags on the home feed
-  - Users can upload images directly from their local machine as an image file
-- [ ] Web app displays a loading animation whenever data is being fetched
+Backend & Database: Supabase (PostgreSQL, Auth, Storage)
 
-The following **additional** features are implemented:
+Real-time: Supabase Realtime Postgres Changes
 
-* [ ] List anything else that you added to improve the site's functionality!
+Authentication: Supabase Auth (Email/Password)
 
-## Video Walkthrough
+Hosting: Vercel or Netlify (for frontend), Supabase Edge Functions (for serverless tagging endpoint)
 
-Here's a walkthrough of implemented user stories:
+Utilities: OpenAI API (GPT-3.5 for AI-generated tags), ESLint, Prettier
 
-Please give the link a minute, it takes a while to render. Thank you!
+Version Control: Git, GitHub
 
-<!-- Replace this with whatever GIF tool you used! -->
-GIF created with Screen Recording to Gif
+**Key Features**
 
-## Notes
+User Authentication – Secure email/password sign up & login powered by Supabase Auth.
 
-Describe any challenges encountered while building the app.
+Create & Manage Posts – Write titles, Markdown-enabled content, and optional image URLs; live preview before submitting.
 
-## License
+Real-time Feed – View, sort (newest/upvotes/downvotes), and search posts without page reloads.
 
-    Copyright [2025] [Injam Chowdhury]
+Post Interactions – Upvote/downvote any number of times; leave threaded comments on each post.
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+Post Detail Page – Full view of content, images, AI-generated tags, and comment threads with edit/delete by author.
 
-        http://www.apache.org/licenses/LICENSE-2.0
+Realtime Updates – Supabase Realtime listens for inserts, updates, and deletes to instantly refresh the feed.
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+AI Integration – OpenAI GPT-3.5 Turbo suggests relevant single-word tags for each post.
+
+Profile Dashboard – View account details, personal info (name, age, location), and summary of your posts.
