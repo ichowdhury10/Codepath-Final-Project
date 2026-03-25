@@ -1,43 +1,100 @@
-**Linkhub**
+# Linkhub
 
-Linkhub is a modern React-powered community forum application built to showcase my full-stack web development skills. Users can sign up, create and manage posts with rich text (Markdown) and optional images, interact through upvotes/downvotes and comments, and personalize their experience with live previews and real-time updates via Supabase.
+A modern community forum built with React and Supabase. Users can create posts, vote, comment, and discover content through search and sorting.
 
-**Live Demo**
+**Live Demo:** *(deploy link here)*
 
+## Features
 
+- **Authentication** — Secure email/password sign-up and login via Supabase Auth
+- **Post Feed** — Create, read, search, and sort posts; Markdown content with live preview
+- **Voting** — Upvote/downvote system with optimistic UI updates
+- **Comments** — Threaded comments on each post stored in Supabase
+- **Edit & Delete** — Post owners can edit or remove their own posts
+- **Profile Dashboard** — User stats (post count, total upvotes, comments), post history
+- **Image Support** — Attach images to posts via URL
 
-Tech Stack & Tools
+## Tech Stack
 
-Frontend: ReactJs, React Router, React Markdown
+| Layer      | Technology                          |
+|------------|-------------------------------------|
+| Frontend   | React 18, React Router v7           |
+| Backend    | Supabase (PostgreSQL + Auth)        |
+| Markdown   | react-markdown                      |
+| Build      | Vite 6                              |
+| Deployment | Vercel                              |
 
-Styling: CSS Modules (component-scoped .css files), Flexbox, Grid
+## Getting Started
 
-Backend & Database: Supabase (PostgreSQL, Auth, Storage)
+### Prerequisites
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
 
-Real-time: Supabase Realtime Postgres Changes
+### Setup
 
-Authentication: Supabase Auth (Email/Password)
+```bash
+git clone https://github.com/ichowdhury10/Codepath-Final-Project.git
+cd Codepath-Final-Project
+npm install
+```
 
-Hosting: Vercel or Netlify (for frontend), Supabase Edge Functions (for serverless tagging endpoint)
+Create a `.env` file in the project root:
 
-Utilities: OpenAI API (GPT-3.5 for AI-generated tags), ESLint, Prettier
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-Version Control: Git, GitHub
+### Supabase Table
 
-**Key Features**
+Create a `posts` table in your Supabase project:
 
-User Authentication – Secure email/password sign up & login powered by Supabase Auth.
+```sql
+create table posts (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default now(),
+  title text not null,
+  content text not null,
+  image_url text,
+  upvotes integer default 0,
+  downvotes integer default 0,
+  comments text[] default '{}',
+  owner uuid references auth.users(id),
+  tags text[]
+);
 
-Create & Manage Posts – Write titles, Markdown-enabled content, and optional image URLs; live preview before submitting.
+-- Enable Row Level Security
+alter table posts enable row level security;
 
-Real-time Feed – View, sort (newest/upvotes/downvotes), and search posts without page reloads.
+-- Allow authenticated users to read all posts
+create policy "Public read" on posts for select using (true);
 
-Post Interactions – Upvote/downvote any number of times; leave threaded comments on each post.
+-- Allow users to insert their own posts
+create policy "Authenticated insert" on posts for insert with check (auth.uid() = owner);
 
-Post Detail Page – Full view of content, images, AI-generated tags, and comment threads with edit/delete by author.
+-- Allow users to update/delete their own posts
+create policy "Owner update" on posts for update using (auth.uid() = owner);
+create policy "Owner delete" on posts for delete using (auth.uid() = owner);
+```
 
-Realtime Updates – Supabase Realtime listens for inserts, updates, and deletes to instantly refresh the feed.
+### Run
 
-AI Integration – OpenAI GPT-3.5 Turbo suggests relevant single-word tags for each post.
+```bash
+npm run dev
+```
 
-Profile Dashboard – View account details, personal info (name, age, location), and summary of your posts.
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── PostFeed.jsx      # Main feed with create, search, sort, vote
+│   ├── PostPage.jsx      # Full post view with edit, delete, comments
+│   ├── Profile.jsx       # User stats and post history
+│   ├── Login.jsx         # Login form
+│   └── SignUp.jsx        # Registration form
+├── contexts/
+│   └── AuthContext.jsx   # Supabase auth state & helpers
+├── supabaseClient.js     # Supabase client initialization
+└── App.jsx               # Router, header, protected routes
+```

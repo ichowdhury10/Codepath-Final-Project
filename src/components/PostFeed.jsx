@@ -1,222 +1,254 @@
-// src/components/PostFeed.jsx
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
+import { supabase } from '../supabaseClient'
+import { useAuth } from '../contexts/AuthContext'
 import './PostFeed.css'
 
-export default function PostFeed({ posts, setPosts }) {
-  // Form state
-  const [title, setTitle] = useState('')
-  const [content, setContent] = useState('')
+export default function PostFeed() {
+  const { user } = useAuth()
 
-  // Search & sort
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('newest')
+  const [showCreate, setShowCreate] = useState(false)
 
-  // Comments per-post
-  const [commentsState, setCommentsState] = useState({})
+  // Create form state
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  // Load saved posts on mount
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('posts')) || []
-    setPosts(saved)
-  }, [setPosts])
+    fetchPosts()
+  }, [])
 
-  // Persist helper
-  const persist = (updated) => {
-    setPosts(updated)
-    localStorage.setItem('posts', JSON.stringify(updated))
+  const fetchPosts = async () => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (!error) setPosts(data || [])
+    setLoading(false)
   }
 
-  // Create a new post
-  const handleCreate = (e) => {
+  const handleCreate = async (e) => {
     e.preventDefault()
     if (!title.trim() || !content.trim()) return
+    setSubmitting(true)
 
-    const newPost = {
-      id: Date.now(),
+    const { error } = await supabase.from('posts').insert({
       title: title.trim(),
       content: content.trim(),
-      createdAt: new Date().toISOString(),
+      image_url: imageUrl.trim() || null,
       upvotes: 0,
       downvotes: 0,
       comments: [],
+      owner: user.id,
+    })
+
+    if (!error) {
+      setTitle('')
+      setContent('')
+      setImageUrl('')
+      setShowCreate(false)
+      fetchPosts()
     }
-    persist([newPost, ...posts])
-    setTitle('')
-    setContent('')
+    setSubmitting(false)
   }
 
-  // Vote helper
-  const updateVotes = (postId, field) => {
-    const updated = posts.map((p) =>
-      p.id === postId ? { ...p, [field]: p[field] + 1 } : p
+  const handleVote = async (post, field) => {
+    const newVal = post[field] + 1
+    setPosts((prev) =>
+      prev.map((p) => (p.id === post.id ? { ...p, [field]: newVal } : p))
     )
-    persist(updated)
+    await supabase
+      .from('posts')
+      .update({ [field]: newVal })
+      .eq('id', post.id)
   }
 
-  // Delete a post
-  const handleDelete = (postId) => {
-    const updated = posts.filter((p) => p.id !== postId)
-    persist(updated)
+  const handleDelete = async (postId) => {
+    if (!window.confirm('Delete this post?')) return
+    setPosts((prev) => prev.filter((p) => p.id !== postId))
+    await supabase.from('posts').delete().eq('id', postId)
   }
 
-  // Add comment
-  const handleAddComment = (postId) => {
-    const text = (commentsState[postId] || '').trim()
-    if (!text) return
-    const updated = posts.map((p) =>
-      p.id === postId ? { ...p, comments: [...p.comments, text] } : p
-    )
-    persist(updated)
-    setCommentsState((cs) => ({ ...cs, [postId]: '' }))
-  }
-
-  // Filter & sort posts
-  const filtered = posts.filter((p) =>
-    p.title.toLowerCase().includes(searchQuery.toLowerCase())
+  // Filter + sort
+  const filtered = posts.filter(
+    (p) =>
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.content.toLowerCase().includes(searchQuery.toLowerCase())
   )
   const displayed = [...filtered].sort((a, b) => {
-    const da = new Date(a.createdAt),
-      db = new Date(b.createdAt)
     switch (sortBy) {
       case 'oldest':
-        return da - db
+        return new Date(a.created_at) - new Date(b.created_at)
       case 'upvotes':
         return b.upvotes - a.upvotes
       case 'downvotes':
         return b.downvotes - a.downvotes
-      case 'newest':
       default:
-        return db - da
+        return new Date(b.created_at) - new Date(a.created_at)
     }
   })
 
   return (
-    <div className="postfeed-container">
-      {/* Create‐post card */}
-      <div className="create-card">
-        <h2>Create a New Post</h2>
-        <form onSubmit={handleCreate}>
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <textarea
-            rows={4}
-            placeholder="Write your content here (Markdown supported)…"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          {/* Live Markdown preview */}
-          <div className="md-preview">
-            <h4>Preview</h4>
-            <div className="preview-box">
-              <ReactMarkdown>
-                {content || '*Nothing to preview…*'}
-              </ReactMarkdown>
-            </div>
-          </div>
-          <button type="submit" disabled={!title.trim() || !content.trim()}>
-            Create Post
-          </button>
-        </form>
-      </div>
-
-      {/* Search + Sort */}
-      <div className="search-sort">
+    <div className="feed-container">
+      {/* Toolbar */}
+      <div className="feed-toolbar">
         <input
           type="text"
-          placeholder="🔍 Search posts by title…"
+          className="search-input"
+          placeholder="Search posts…"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
-          <option value="upvotes">Most upvotes</option>
-          <option value="downvotes">Most downvotes</option>
+        <select
+          className="sort-select"
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+        >
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="upvotes">Top</option>
+          <option value="downvotes">Controversial</option>
         </select>
+        <button
+          className="btn-new-post"
+          onClick={() => setShowCreate((v) => !v)}
+        >
+          {showCreate ? 'Cancel' : '+ New Post'}
+        </button>
       </div>
+
+      {/* Create form */}
+      {showCreate && (
+        <div className="create-card">
+          <h3>Create a Post</h3>
+          <form onSubmit={handleCreate}>
+            <input
+              type="text"
+              placeholder="Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+            <textarea
+              rows={5}
+              placeholder="Write your content… (Markdown supported)"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              required
+            />
+            <input
+              type="url"
+              placeholder="Image URL (optional)"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+            />
+            {content && (
+              <div className="md-preview">
+                <p className="preview-label">Preview</p>
+                <div className="preview-box">
+                  <ReactMarkdown>{content}</ReactMarkdown>
+                </div>
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={!title.trim() || !content.trim() || submitting}
+            >
+              {submitting ? 'Posting…' : 'Post'}
+            </button>
+          </form>
+        </div>
+      )}
 
       {/* Feed */}
-      <h2>Your Feed</h2>
-      <div className="feed-list">
-        {displayed.map((post) => (
-          <div key={post.id} className="post-card">
-            <div className="post-header">
-              <Link to={`/post/${post.id}`} className="post-title">
-                {post.title}
-              </Link>
-              <span className="post-date">
-                {new Date(post.createdAt).toLocaleString()}
-              </span>
-            </div>
+      {loading ? (
+        <div className="feed-state">Loading posts…</div>
+      ) : displayed.length === 0 ? (
+        <div className="feed-state">
+          {searchQuery
+            ? 'No posts match your search.'
+            : 'No posts yet — be the first to post!'}
+        </div>
+      ) : (
+        <div className="feed-list">
+          {displayed.map((post) => (
+            <div key={post.id} className="post-card">
+              {/* Vote column */}
+              <div className="vote-col">
+                <button
+                  className="vote-btn up"
+                  onClick={() => handleVote(post, 'upvotes')}
+                  aria-label="Upvote"
+                >
+                  ▲
+                </button>
+                <span className="vote-score">
+                  {post.upvotes - post.downvotes}
+                </span>
+                <button
+                  className="vote-btn down"
+                  onClick={() => handleVote(post, 'downvotes')}
+                  aria-label="Downvote"
+                >
+                  ▼
+                </button>
+              </div>
 
-            {/* Excerpt */}
-            <div className="post-content">
-              <ReactMarkdown>
-                {post.content.length > 200
-                  ? post.content.slice(0, 200) + '…'
-                  : post.content}
-              </ReactMarkdown>
+              {/* Content */}
+              <div className="post-body">
+                <Link to={`/post/${post.id}`} className="post-title">
+                  {post.title}
+                </Link>
+                <div className="post-meta">
+                  <span>
+                    {new Date(post.created_at).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </span>
+                  <span className="meta-dot">·</span>
+                  <span>
+                    {(post.comments || []).length} comment
+                    {(post.comments || []).length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="post-excerpt">
+                  <ReactMarkdown>
+                    {post.content.length > 200
+                      ? post.content.slice(0, 200) + '…'
+                      : post.content}
+                  </ReactMarkdown>
+                </div>
+                {post.tags && post.tags.length > 0 && (
+                  <div className="tag-row">
+                    {post.tags.map((tag, i) => (
+                      <span key={i} className="tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {user?.id === post.owner && (
+                  <button
+                    className="btn-delete-inline"
+                    onClick={() => handleDelete(post.id)}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
             </div>
-
-            {/* Votes */}
-            <div className="vote-buttons">
-              <button
-                onClick={() => updateVotes(post.id, 'upvotes')}
-                className="btn-upvote"
-              >
-                👍 {post.upvotes}
-              </button>
-              <button
-                onClick={() => updateVotes(post.id, 'downvotes')}
-                className="btn-downvote"
-              >
-                👎 {post.downvotes}
-              </button>
-            </div>
-
-            {/* Delete */}
-            <button
-              onClick={() => handleDelete(post.id)}
-              className="btn-delete"
-            >
-              Delete
-            </button>
-
-            {/* Comments */}
-            <div className="comments-section">
-              <h4>Comments</h4>
-              {post.comments.map((c, i) => (
-                <p key={i} className="comment">
-                  {c}
-                </p>
-              ))}
-              <textarea
-                rows={2}
-                placeholder="Add a comment…"
-                value={commentsState[post.id] || ''}
-                onChange={(e) =>
-                  setCommentsState((cs) => ({
-                    ...cs,
-                    [post.id]: e.target.value,
-                  }))
-                }
-              />
-              <button
-                onClick={() => handleAddComment(post.id)}
-                className="btn-comment"
-              >
-                Add Comment
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

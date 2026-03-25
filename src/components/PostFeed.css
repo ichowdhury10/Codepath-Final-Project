@@ -1,242 +1,231 @@
-/* src/components/PostFeed.css */
-
-/* 1) Make padding count toward element width */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+.feed-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
 }
 
-/* 2) Centered wrapper */
-.postfeed-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 0 1rem;            /* small horizontal gutter */
-  font-family:
-    system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+/* ── Toolbar ─────────────────────────────────────────────── */
+.feed-toolbar {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
-/* 3) Create-post card */
+.search-input {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.55rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  transition: border-color 0.15s;
+}
+.search-input:focus { outline: none; border-color: var(--primary); }
+
+.sort-select {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.btn-new-post {
+  padding: 0.55rem 1.1rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn-new-post:hover { background: var(--primary-dark); }
+
+/* ── Create card ─────────────────────────────────────────── */
 .create-card {
-  background: #fff;
-  border-radius: 8px;
+  background: var(--surface);
+  border-radius: var(--radius);
   padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
 }
 
-.create-card h2 {
+.create-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
   margin-bottom: 1rem;
-  font-size: 1.5rem;
-  color: #333;
 }
 
-/* 4) Form inputs / textareas */
-.create-card form input,
-.create-card form textarea {
-  width: 100%;               /* full width of parent */
-  padding: 0.75rem 1rem;     /* extra right padding included */
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
+.create-card input,
+.create-card textarea {
+  width: 100%;
+  padding: 0.65rem 0.875rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  margin-bottom: 0.75rem;
   resize: vertical;
-  overflow: hidden;          /* no overflow text */
-  background: #fafafa;
-  transition: border-color 0.2s;
+  transition: border-color 0.15s;
+}
+.create-card input:focus,
+.create-card textarea:focus { outline: none; border-color: var(--primary); background: white; }
+
+.preview-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
 }
 
-.create-card form input:focus,
-.create-card form textarea:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-/* 5) Markdown preview */
-.md-preview {
-  margin-bottom: 1rem;
-}
 .preview-box {
-  background: #f8f9fa;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   padding: 0.75rem 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
   max-height: 150px;
   overflow-y: auto;
-  font-size: 0.95rem;
-  color: #333;
+  margin-bottom: 0.75rem;
 }
 
-/* 6) Create button */
-.create-card form button {
+.create-card button[type='submit'] {
   width: 100%;
-  padding: 0.75rem;
-  font-size: 1rem;
-  color: #fff;
-  background: #007bff;
+  padding: 0.7rem;
+  background: var(--primary);
+  color: white;
   border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.create-card form button:disabled {
-  background: #a0c5f8;
-  cursor: not-allowed;
-}
-
-.create-card form button:not(:disabled):hover {
-  background: #0056b3;
-}
-
-/* 7) Search + sort row stays within container */
-.search-sort {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.search-sort input,
-.search-sort select {
-  flex: 1;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.95rem;
-  background: #fff;
-}
-
-/* 8) Feed heading */
-.postfeed-container > h2 {
-  font-size: 1.75rem;
-  margin-bottom: 1rem;
-  color: #222;
-}
-
-/* 9) Individual post cards */
-.feed-list .post-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-/* Header row: title + date */
-.post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.post-title {
-  font-size: 1.25rem;
-  color: #007bff;
-  text-decoration: none;
   font-weight: 600;
+  transition: background 0.15s;
 }
-.post-title:hover {
-  text-decoration: underline;
-}
-.post-date {
-  font-size: 0.875rem;
-  color: #666;
+.create-card button[type='submit']:hover:not(:disabled) { background: var(--primary-dark); }
+.create-card button[type='submit']:disabled { background: #bfdbfe; cursor: not-allowed; }
+
+/* ── Feed states ─────────────────────────────────────────── */
+.feed-state {
+  text-align: center;
+  padding: 4rem 0;
+  color: var(--text-muted);
 }
 
-/* Excerpt container */
-.post-content {
-  margin: 0.75rem 0 1rem;
-  color: #333;
-  line-height: 1.5;
+/* ── Post card ───────────────────────────────────────────── */
+.post-card {
+  display: flex;
+  gap: 0.875rem;
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.post-card:hover { box-shadow: var(--shadow); border-color: #d1d5db; }
+
+/* Vote column */
+.vote-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 32px;
+  padding-top: 0.1rem;
+}
+
+.vote-btn {
+  width: 28px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  transition: all 0.15s;
+}
+.vote-btn.up:hover  { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.vote-btn.down:hover { background: var(--red-light); border-color: var(--red); color: var(--red); }
+
+.vote-score {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+/* Post body */
+.post-body { flex: 1; min-width: 0; }
+
+.post-title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+  transition: color 0.15s;
+}
+.post-title:hover { color: var(--primary); }
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.meta-dot { opacity: 0.4; }
+
+.post-excerpt {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
   overflow-wrap: break-word;
 }
+.post-excerpt p { margin: 0; }
 
-/* Vote buttons */
-.vote-buttons {
+/* Tags */
+.tag-row {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
 }
-.btn-upvote,
-.btn-downvote {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.95rem;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: #fff;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-.btn-upvote:hover {
-  background: #e6f4ea;
-  border-color: #b8e0c9;
-}
-.btn-downvote:hover {
-  background: #fdecea;
-  border-color: #f7cacc;
-}
-
-/* Delete button */
-.btn-delete {
-  padding: 0.5rem 0.75rem;
-  font-size: 0.95rem;
-  color: #fff;
-  background: #dc3545;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.btn-delete:hover {
-  background: #c82333;
-}
-
-/* Comments section */
-.comments-section {
-  margin-top: 1.25rem;
-  border-top: 1px solid #eee;
-  padding-top: 1rem;
-}
-.comments-section h4 {
-  margin-bottom: 0.75rem;
-  color: #333;
+.tag {
+  font-size: 0.72rem;
   font-weight: 500;
-}
-.comments-section .comment {
-  margin-bottom: 0.5rem;
-  color: #444;
-  font-size: 0.95rem;
-}
-
-/* Add-comment box */
-.comments-section textarea {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  resize: vertical;
-}
-.comments-section textarea:focus {
-  border-color: #007bff;
-  outline: none;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
 }
 
-/* Add-Comment button */
-.btn-comment {
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
-  color: #fff;
-  background: #007bff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
+/* Inline delete */
+.btn-delete-inline {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
 }
-.btn-comment:hover {
-  background: #0056b3;
+.btn-delete-inline:hover {
+  color: var(--red);
+  border-color: var(--red);
+  background: var(--red-light);
 }

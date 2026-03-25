@@ -1,50 +1,89 @@
-/* Banner Styles */
-.top-banner {
+/* ── Header ──────────────────────────────────────────────── */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.header-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 60px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  background-color: #007bff;
-  padding: 20px 40px;
-  color: white;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.logo-container {
+.header-brand {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
 }
 
-.logo-container .logo {
-  width: 50px;
-  height: auto;
-  cursor: pointer;
-  margin-right: 15px;
+.header-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
-.logo-container h1 {
-  font-size: 1.8rem;
-  margin: 0;
-}
-
-/* Header navigation */
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
 }
 
-.header-nav a,
-.logout-btn {
-  color: white;
-  text-decoration: none;
-  background: transparent;
+.nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
+}
+.nav-link:hover,
+.nav-link.active { color: var(--primary); }
+
+.btn-header-logout {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: none;
   border: none;
-  font-size: 1rem;
-  cursor: pointer;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s;
 }
+.btn-header-logout:hover { color: var(--red); }
 
-.header-nav a:hover,
-.logout-btn:hover {
-  text-decoration: underline;
+.btn-header-signup {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: white;
+  background: var(--primary);
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  border: none;
+  transition: background 0.15s;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-header-signup:hover { background: var(--primary-dark); }
+
+/* ── Main ────────────────────────────────────────────────── */
+.app-main { min-height: calc(100vh - 60px); }
+
+.page-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40vh;
+  color: var(--text-muted);
 }

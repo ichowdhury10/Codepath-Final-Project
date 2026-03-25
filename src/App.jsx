@@ -1,10 +1,10 @@
-// src/App.jsx
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  NavLink,
   Link,
 } from 'react-router-dom'
 import { useAuth } from './contexts/AuthContext'
@@ -17,75 +17,87 @@ import SignUp from './components/SignUp'
 import './App.css'
 
 function PrivateRoute({ children }) {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+  if (loading) return <div className="page-loading">Loading…</div>
   return user ? children : <Navigate to="/login" replace />
 }
 
 export default function App() {
   const { user, logout } = useAuth()
-  const [posts, setPosts] = useState([])
-
-  useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('posts')) || []
-    setPosts(saved)
-  }, [])
 
   return (
     <Router>
-      <header className="top-banner">
-        <div className="logo-container">
-          <Link to="/">
-            <img src={logo} alt="Linkhub Logo" className="logo" />
+      <header className="app-header">
+        <div className="header-inner">
+          <Link to="/" className="header-brand">
+            <img src={logo} alt="Linkhub" className="header-logo" />
+            <span>Linkhub</span>
           </Link>
-          <h1>Linkhub</h1>
-        </div>
 
-        <nav className="header-nav">
-          {user ? (
-            <>
-              <Link to="/profile">Profile</Link>
-              <button onClick={logout} className="logout-btn">
-                Log Out
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login">Log In</Link>
-              <Link to="/signup">Sign Up</Link>
-            </>
-          )}
-        </nav>
+          <nav className="header-nav">
+            {user ? (
+              <>
+                <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    isActive ? 'nav-link active' : 'nav-link'
+                  }
+                >
+                  Profile
+                </NavLink>
+                <button onClick={logout} className="btn-header-logout">
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    isActive ? 'nav-link active' : 'nav-link'
+                  }
+                >
+                  Log In
+                </NavLink>
+                <Link to="/signup" className="btn-header-signup">
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
       </header>
 
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <PostFeed posts={posts} setPosts={setPosts} />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/post/:id"
-          element={
-            <PrivateRoute>
-              <PostPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
+      <main className="app-main">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <PostFeed />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/post/:id"
+            element={
+              <PrivateRoute>
+                <PostPage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <PrivateRoute>
+                <Profile />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </main>
     </Router>
   )
 }
