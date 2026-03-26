@@ -21,17 +21,14 @@
 .header-brand {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -0.02em;
 }
 
 .header-logo {
-  width: 30px;
-  height: 30px;
+  height: 36px;
+  width: auto;
   object-fit: contain;
+  border-radius: 8px;
+  display: block;
 }
 
 .header-nav {

@@ -31,7 +31,6 @@ export default function App() {
         <div className="header-inner">
           <Link to="/" className="header-brand">
             <img src={logo} alt="Linkhub" className="header-logo" />
-            <span>Linkhub</span>
           </Link>
 
           <nav className="header-nav">
