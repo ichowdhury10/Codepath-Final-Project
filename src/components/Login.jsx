@@ -3,11 +3,15 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import './AuthForm.css'
 
+const DEMO_EMAIL    = import.meta.env.VITE_DEMO_EMAIL    || 'demo@linkhub.app'
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD || 'demo1234'
+
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [demoLoading, setDemoLoading] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -24,6 +28,18 @@ export default function Login() {
     setLoading(false)
   }
 
+  const handleDemo = async () => {
+    setError('')
+    setDemoLoading(true)
+    const { error } = await login(DEMO_EMAIL, DEMO_PASSWORD)
+    if (error) {
+      setError('Demo account unavailable. Please sign up to explore.')
+    } else {
+      navigate('/')
+    }
+    setDemoLoading(false)
+  }
+
   return (
     <div className="auth-page">
       <div className="auth-card">
@@ -31,6 +47,23 @@ export default function Login() {
         <p className="auth-subtitle">Log in to your Linkhub account</p>
 
         {error && <div className="auth-error">{error}</div>}
+
+        {/* Demo banner */}
+        <div className="demo-banner">
+          <div className="demo-banner-text">
+            <span className="demo-badge">Demo</span>
+            Just browsing? Jump straight in.
+          </div>
+          <button
+            className="btn-demo"
+            onClick={handleDemo}
+            disabled={demoLoading}
+          >
+            {demoLoading ? 'Loading…' : 'Try Demo →'}
+          </button>
+        </div>
+
+        <div className="auth-divider"><span>or sign in with your account</span></div>
 
         <form onSubmit={handleSubmit}>
           <div className="auth-field">
